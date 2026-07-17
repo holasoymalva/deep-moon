@@ -5,7 +5,7 @@
 **A small language model that writes code, distilled on a laptop — with every step shown.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Status: Phase 0](https://img.shields.io/badge/Status-Phase_0_of_7-orange.svg)](PLAN.md)
+[![Status: Phase 1](https://img.shields.io/badge/Status-Phase_1_of_7-orange.svg)](PLAN.md)
 [![Results: none yet](https://img.shields.io/badge/Results-none_yet-lightgrey.svg)](#results)
 [![Built with MLX](https://img.shields.io/badge/Built_with-MLX-black.svg)](https://github.com/ml-explore/mlx)
 
@@ -89,13 +89,13 @@ Teachers hallucinate. A teacher's confident wrong answer is still a wrong answer
 The most common way these projects fail isn't a bad learning rate — it's finishing a training run with nothing to compare against. `deep-moon` builds the eval harness in Phase 1, before a single gradient step, and measures **three** baselines: the base student (the floor), the teacher (the ceiling), and the *instruct* model of identical size — the honest rival. Any claim that skips that third number isn't a claim, it's marketing.
 
 **3. Know which distillation you're doing.**
-Most "distillation" is SFT on teacher outputs: the student sees the token the teacher picked, and nothing else — no confidence, no alternatives. Real logit-level KD transfers the teacher's *entire distribution* and needs far less data. It also demands a shared tokenizer, which Qwen2.5 and Qwen3 **might not have** despite both reporting `vocab_size = 151936`. We don't assume. [Phase 0 tests it](PLAN.md#phase-0--environment-and-fundamentals), and the answer picks the path.
+Most "distillation" is SFT on teacher outputs: the student sees the token the teacher picked, and nothing else — no confidence, no alternatives. Real logit-level KD transfers the teacher's *entire distribution* and needs far less data. It also demands aligned tokenizers. Qwen2.5 and Qwen3 both *report* `vocab_size = 151643`, but that number is a red herring — their real vocabularies are 151,665 / 151,669. We didn't assume; [Phase 0 measured it](scripts/check_tokenizers.py): every student token maps to the same id in the teacher, and the only difference is 4 control tokens on the teacher's tail. **Verdict: logit-level KD is viable.** The high-signal path is open.
 
 ---
 
 ## Results
 
-**There are none yet.** This project is at Phase 0 of 7. This table is a contract about what will be reported — not a placeholder for numbers we hope to see.
+**There are none yet.** This project is at Phase 1 of 7 — the eval harness is being built *before* any training, on purpose. This table is a contract about what will be reported — not a placeholder for numbers we hope to see.
 
 | Model | Size | In-domain | HumanEval+ | MBPP+ |
 |---|---|---|---|---|
@@ -120,7 +120,7 @@ It will also **get worse at everything outside its domain.** That's catastrophic
 
 ## Reproduce it
 
-> ⚠️ Phase 0. The scripts below are the target interface, not yet the shipped one. Follow [PLAN.md](PLAN.md) for what's real today.
+> ⚠️ Early days. `check_tokenizers.py` is real and runnable today; the later scripts are the target interface, not yet shipped. Follow [PLAN.md](PLAN.md) for current status.
 
 ```bash
 # Requires: Apple Silicon, ~32 GB+ unified memory, uv, git-lfs
@@ -154,12 +154,12 @@ A moon is small, and it only exists in relation to something much larger. It doe
 
 ## Project status
 
-**Phase 0 of 7.** The full roadmap, with the reasoning behind each decision, is in **[PLAN.md](PLAN.md)**.
+**Phase 1 of 7.** The full roadmap, with the reasoning behind each decision, is in **[PLAN.md](PLAN.md)**.
 
 - [x] Plan and architecture decisions
 - [x] License audit — Apache 2.0 confirmed clean for distillation *and* redistribution
-- [ ] Phase 0 — environment, tokenizer compatibility check
-- [ ] Phase 1 — domain selection, eval harness, three baselines
+- [x] Phase 0 — environment (uv/MLX), tokenizer gate → **logit-level KD viable**; both models running locally (student 150 tok/s, teacher 67 tok/s)
+- [ ] Phase 1 — domain fixed (**pandas/polars**); eval harness + three baselines next
 - [ ] Phase 2 — teacher data generation + rejection sampling
 - [ ] Phase 3 — distillation v1 (sequence-level)
 - [ ] Phase 4 — evaluation v1
