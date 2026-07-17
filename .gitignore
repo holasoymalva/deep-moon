@@ -1,0 +1,23 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+.python-version
+
+# Model weights and datasets — too large for git, tracked out-of-band
+models/
+data/
+*.safetensors
+*.gguf
+*.npz
+
+# Keep directory structure + datasheets, ignore their bulk contents
+!data/.gitkeep
+!models/.gitkeep
+
+# HF / caches
+.cache/
+*.log
+
+# OS
+.DS_Store

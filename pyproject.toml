@@ -1,0 +1,13 @@
+[project]
+name = "deep-moon"
+version = "0.1.0"
+description = "Distilling a code-specialized small language model from a 30B teacher into a 1.5B student, entirely on Apple Silicon."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = [
+    "mlx-lm>=0.30",
+    "huggingface-hub>=0.30",
+    "datasets>=3.0",
+    "transformers>=4.48",
+]
